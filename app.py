@@ -116,3 +116,36 @@ def lookup_factor(req: LookupRequest):
         "match_count": 0,
         "matches": []
     }
+
+class CalculationRequest(BaseModel):
+    quantity: float
+    factor_value: float
+    factor_unit: str
+    factor_status: str
+
+
+@app.post("/calculate")
+def calculate_emissions(req: CalculationRequest):
+
+    # Never calculate with an unverified factor
+    if req.factor_status != "VERIFIED":
+        return {
+            "calculation_status": "BLOCKED",
+            "reason": "Emission calculation requires a VERIFIED emission factor.",
+            "kg_co2e": None,
+            "tco2e": None
+        }
+
+    # Deterministic calculation
+    kg_co2e = req.quantity * req.factor_value
+    tco2e = kg_co2e / 1000
+
+    return {
+        "calculation_status": "CALCULATED",
+        "formula": f"{req.quantity} × {req.factor_value}",
+        "quantity": req.quantity,
+        "factor_value": req.factor_value,
+        "factor_unit": req.factor_unit,
+        "kg_co2e": round(kg_co2e, 6),
+        "tco2e": round(tco2e, 6)
+    }
