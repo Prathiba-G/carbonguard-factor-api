@@ -1,0 +1,71 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "CarbonGuard Factor Lookup API",
+    "version": "1.0.0",
+    "description": "Deterministic lookup of UK Government GHG Conversion Factors 2026."
+  },
+  "servers": [
+    {
+      "url": "https://REPLACE-WITH-YOUR-RENDER-URL.onrender.com"
+    }
+  ],
+  "paths": {
+    "/lookup-factor": {
+      "post": {
+        "operationId": "lookupFactor",
+        "summary": "Deterministically look up a verified 2026 emission factor",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LookupRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Lookup result"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "LookupRequest": {
+        "type": "object",
+        "required": [
+          "scope",
+          "activity",
+          "unit",
+          "year"
+        ],
+        "properties": {
+          "scope": {
+            "type": "string"
+          },
+          "activity": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "year": {
+            "type": "integer",
+            "default": 2026
+          },
+          "category": {
+            "type": "string"
+          },
+          "subtype": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}
